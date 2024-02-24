@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/Navbar";
+import AuthContext from "@/context/AuthContext";
 
 const OpenSans = Open_Sans({ subsets: ["latin"] });
 
@@ -15,8 +17,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={OpenSans.className}>{children}</body>
+    <html lang="en" className={OpenSans.className}>
+      <body className="w-full max-w-screen-xl overflow-auto mx-auto">
+        <AuthContext>
+          <header className=" sticky top-0 bg-white z-10 border-b">
+            <Navbar />
+          </header>
+          {children}
+        </AuthContext>
+      </body>
     </html>
   );
 }
