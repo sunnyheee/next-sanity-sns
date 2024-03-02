@@ -2,7 +2,7 @@ import React from "react";
 type Props = {
   text: string;
   onClick: () => void;
-  size: "small" | "big";
+  size?: "small" | "big";
 };
 
 const ColorBtn = ({ text, onClick, size = "small" }: Props) => {

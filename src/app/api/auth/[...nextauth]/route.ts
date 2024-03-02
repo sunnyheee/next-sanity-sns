@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 const authOptions = {
@@ -10,6 +10,18 @@ const authOptions = {
   ],
   pages: {
     signIn: "/auth/signin",
+  },
+  callbacks: {
+    async session({ session }: { session: Session }) {
+      const user = session?.user;
+      if (user) {
+        session.user = {
+          ...user,
+          username: user.email?.split("@")[0] || "",
+        };
+      }
+      return session;
+    },
   },
 };
 
