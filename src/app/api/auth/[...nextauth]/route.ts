@@ -1,8 +1,13 @@
 import { addUser } from "@/service/user";
-import NextAuth, { Session, User } from "next-auth";
+import NextAuth, {
+  AuthOptions,
+  NextAuthOptions,
+  Session,
+  User,
+} from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_OAUTH_ID || "",
@@ -36,9 +41,11 @@ const authOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    },
   },
 };
 
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST, authOptions };
+const handler: NextAuthOptions = NextAuth(authOptions);
+export { handler as GET, handler as POST };
