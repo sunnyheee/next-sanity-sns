@@ -14,7 +14,7 @@ export const authOptions = {
     signIn: "/auth/signin",
   },
   callbacks: {
-    async signIn({ user: { id, name, image, email } }: { user: User }) {
+    async signIn({ user: { id, name, image, email } }) {
       if (!email) {
         return false;
       }
@@ -27,18 +27,25 @@ export const authOptions = {
       });
       return true;
     },
-    async session({ session }: { session: Session }) {
+    async session({ session, token }) {
       const user = session?.user;
       if (user) {
         session.user = {
           ...user,
           username: user.email?.split("@")[0] || "",
+          id: token.id as string,
         };
       }
       return session;
     },
     async redirect({ url, baseUrl }) {
       return baseUrl;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
     },
   },
 } satisfies NextAuthOptions;

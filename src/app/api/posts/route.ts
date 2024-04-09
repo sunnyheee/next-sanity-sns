@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { getFollowingPostsOf } from "@/service/post";
 import { authOptions } from "@/lib/auth";
+import { client } from "@/service/sanity";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
