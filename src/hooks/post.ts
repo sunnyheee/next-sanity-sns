@@ -1,13 +1,6 @@
+import { Comment, FullPost } from "@/model/post";
 import { useCallback } from "react";
-import { Comment, SimplePost } from "@/model/post";
-import useSWR from "swr";
-
-async function updateLike(id: string, like: boolean) {
-  return fetch("/api/likes", {
-    method: "PUT",
-    body: JSON.stringify({ id, like }),
-  }).then((res) => res.json());
-}
+import useSWR, { useSWRConfig } from "swr";
 
 async function addComment(id: string, comment: string) {
   return fetch("/api/comments", {
@@ -16,51 +9,32 @@ async function addComment(id: string, comment: string) {
   }).then((res) => res.json());
 }
 
-export default function usePosts() {
+export default function useFullPost(postId: string) {
   const {
-    data: posts,
+    data: post,
     isLoading,
     error,
     mutate,
-  } = useSWR<SimplePost[]>("/api/posts");
+  } = useSWR<FullPost>(`/api/posts/${postId}`);
 
-  const setLike = useCallback(
-    (post: SimplePost, username: string, like: boolean) => {
-      const newPost = {
-        ...post,
-        likes: like
-          ? [...post.likes, username]
-          : post.likes.filter((item) => item !== username),
-      };
-      const newPosts = posts?.map((p) => (p.id === post.id ? newPost : p));
-
-      return mutate(updateLike(post.id, like), {
-        optimisticData: newPosts,
-        populateCache: false,
-        revalidate: false,
-        rollbackOnError: true,
-      });
-    },
-    [posts, mutate]
-  );
+  const { mutate: globalMutate } = useSWRConfig();
 
   const postComment = useCallback(
-    (post: SimplePost, comment: Comment) => {
+    (comment: Comment) => {
+      if (!post) return;
       const newPost = {
         ...post,
-        comments: post.comments + 1,
+        comments: [...post.comments, comment],
       };
-      const newPosts = posts?.map((p) => (p.id === post.id ? newPost : p));
 
       return mutate(addComment(post.id, comment.comment), {
-        optimisticData: newPosts,
+        optimisticData: newPost,
         populateCache: false,
         revalidate: false,
         rollbackOnError: true,
-      });
+      }).then(() => globalMutate("/api/posts"));
     },
-    [posts, mutate]
+    [post, mutate, globalMutate]
   );
-
-  return { posts, isLoading, error, setLike, postComment };
+  return { post, isLoading, error, postComment };
 }
