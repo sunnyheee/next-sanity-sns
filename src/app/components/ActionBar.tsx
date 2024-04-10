@@ -1,36 +1,35 @@
-"use client";
-import { useState } from "react";
 import BookmarkIcon from "./ui/icons/BookmarkIcon";
 import HeartIcon from "./ui/icons/HeartIcon";
 import { parseDate } from "@/util/date";
-import ToggleButton from "./ui/ToggleBtn";
+
 import HeartFillIcon from "./ui/icons/HeartFillIcon";
 import BookmarkFillIcon from "./ui/icons/BookmarkFillIcon";
-import { useSession } from "next-auth/react";
-import { useSWRConfig } from "swr";
 import { SimplePost } from "@/model/post";
 import usePosts from "@/hooks/posts";
-
+import useMe from "@/hooks/me";
+import ToggleButton from "./ui/ToggleBtn";
 type Props = {
   post: SimplePost;
 };
-
-const ActionBar = ({ post }: Props) => {
+export default function ActionBar({ post }: Props) {
   const { id, likes, username, text, createdAt } = post;
-  const { data: session } = useSession();
-  const user = session?.user;
-  const liked = user ? likes.includes(user.username) : false;
-  const [bookmarked, setBookmarked] = useState(false);
   const { setLike } = usePosts();
+  const { user, setBookmark } = useMe();
+
+  const liked = user ? likes.includes(user.username) : false;
+  const bookmarked = user?.bookmarks.includes(id) ?? false;
+
   const handleLike = (like: boolean) => {
-    if (user) {
-      setLike(post, user.username, like);
-    }
+    user && setLike(post, user.username, like);
+  };
+
+  const handleBookmark = (bookmark: boolean) => {
+    user && setBookmark(id, bookmark);
   };
 
   return (
     <>
-      <div className="flex justify-between my-2 px-6">
+      <div className="flex justify-between my-2 px-4">
         <ToggleButton
           toggled={liked}
           onToggle={handleLike}
@@ -39,7 +38,7 @@ const ActionBar = ({ post }: Props) => {
         />
         <ToggleButton
           toggled={bookmarked}
-          onToggle={setBookmarked}
+          onToggle={handleBookmark}
           onIcon={<BookmarkFillIcon />}
           offIcon={<BookmarkIcon />}
         />
@@ -54,13 +53,10 @@ const ActionBar = ({ post }: Props) => {
             {text}
           </p>
         )}
-
         <p className="text-xs text-neutral-500 uppercase my-2">
           {parseDate(createdAt)}
         </p>
       </div>
     </>
   );
-};
-
-export default ActionBar;
+}

@@ -1,24 +1,19 @@
 "use client";
-
+import useMe from "@/hooks/me";
 import Link from "next/link";
 import { PropagateLoader } from "react-spinners";
-import useSWR from "swr";
 import Avatar from "./Avatar";
 import ScrollableBar from "./ui/ScrollableBar";
-import { HomeUser } from "@/model/user";
 
-const FollowingBar = () => {
-  const { data, isLoading, error } = useSWR<HomeUser>("/api/me");
-  const users = data?.following;
-
+export default function FollowingBar() {
+  const { user, isLoading: loading, error } = useMe();
+  const users = user?.following;
   return (
     <section className="w-full flex justify-center items-center p-4 shadow-sm shadow-neutral-300 mb-4 rounded-lg min-h-[90px] overflow-x-auto relative z-0">
-      {isLoading ? (
+      {loading ? (
         <PropagateLoader size={8} color="red" />
       ) : (
-        (!users || users.length === 0) && (
-          <p>{`フォロー中のユーザーがありません`}</p>
-        )
+        (!users || users.length === 0) && <p>{`You don't have following`}</p>
       )}
       {users && users.length > 0 && (
         <ScrollableBar>
@@ -38,6 +33,4 @@ const FollowingBar = () => {
       )}
     </section>
   );
-};
-
-export default FollowingBar;
+}

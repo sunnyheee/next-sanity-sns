@@ -1,12 +1,10 @@
 import { AuthUser } from "@/model/user";
-import React from "react";
 import Avatar from "./Avatar";
 
 type Props = {
   user: AuthUser;
 };
-
-const Sidebar = ({ user: { name, username, image } }: Props) => {
+export default function SideBar({ user: { name, username, image } }: Props) {
   return (
     <>
       <div className="flex items-center">
@@ -17,13 +15,12 @@ const Sidebar = ({ user: { name, username, image } }: Props) => {
         </div>
       </div>
       <p className="text-sm text-neutral-500 mt-8">
-        About / Help / Press / API / Jobs{" "}
+        About · Help · Press · API · Jobs · Privacy · Terms · Location ·
+        Language
       </p>
       <p className="font-bold text-sm mt-8 text-neutral-500">
-        @Copyright SNS from METAL
+        @Copyright INSTANTGRAM from METAL
       </p>
     </>
   );
-};
-
-export default Sidebar;
+}

@@ -1,3 +1,4 @@
+import post from "../../sanity-studio/schemaTypes/post";
 import { SimplePost } from "./../model/post";
 import { client, urlFor } from "./sanity";
 
@@ -17,10 +18,10 @@ export async function getFollowingPostsOf(username: string) {
   return client
     .fetch(
       `*[_type =="post" && author->username == "${username}"
-            || author._ref in *[_type == "user" && username == "${username}"].following[]._ref]
-            | order(_createdAt desc){
-            ${simplePostProjection}
-          }`
+          || author._ref in *[_type == "user" && username == "${username}"].following[]._ref]
+          | order(_createdAt desc){
+          ${simplePostProjection}
+        }`
     )
     .then(mapPosts);
 }
@@ -39,7 +40,7 @@ export async function getPost(id: string) {
       "createdAt":_creatdAt
     }`
     )
-    .then(mapPosts);
+    .then((post) => ({ ...post, image: urlFor(post.image) }));
 }
 
 export async function getPostsOf(username: string) {
@@ -79,6 +80,7 @@ function mapPosts(posts: SimplePost[]) {
     image: urlFor(post.image),
   }));
 }
+
 export async function likePost(postId: string, userId: string) {
   return client
     .patch(postId) //

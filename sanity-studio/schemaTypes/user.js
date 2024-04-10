@@ -33,7 +33,7 @@ export default {
           to: [{type: 'user'}],
         },
       ],
-      validation: (Rule) => Rule.unique(), // 팔로잉 하고 있는사람은 고유해야하기때문에 unique 사용
+      validation: (Rule) => Rule.unique(),
     },
     {
       title: 'Followers',
@@ -45,7 +45,7 @@ export default {
           to: [{type: 'user'}],
         },
       ],
-      validation: (Rule) => Rule.unique(), // 팔로워 하고 있는사람은 고유해야하기때문에 unique 사용
+      validation: (Rule) => Rule.unique(),
     },
     {
       title: 'Bookmarks',
@@ -57,7 +57,7 @@ export default {
           to: [{type: 'post'}],
         },
       ],
-      validation: (Rule) => Rule.unique(), // 팔로잉 하고 있는사람은 고유해야하기때문에 unique 사용
+      validation: (Rule) => Rule.unique(),
     },
   ],
   preview: {
